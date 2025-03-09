@@ -4,9 +4,29 @@ import { AppService } from './app.service';
 import { GoodsModule } from './goods/goods.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
+import { OrderDetailModule } from './order-detail/order-detail.module';
+import { UserModule } from './user/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-    imports: [GoodsModule, OrderModule, PaymentModule],
+    imports: [
+        TypeOrmModule.forRoot({
+            name: 'facade-orm',
+            type: 'mysql',
+            host: '127.0.0.1',
+            port: 3306,
+            username: 'root',
+            password: 'develjsw1993!@',
+            database: 'oop',
+            entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
+            synchronize: false
+        }),
+        GoodsModule,
+        OrderModule,
+        OrderDetailModule,
+        PaymentModule,
+        UserModule
+    ],
     controllers: [AppController],
     providers: [AppService]
 })
