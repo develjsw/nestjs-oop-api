@@ -20,10 +20,10 @@ export class OrderEntity {
     totalPrice: number;
 
     @Column({
-        name: 'order_state',
+        name: 'order_status',
         type: 'varchar'
     })
-    orderState: string;
+    orderStatus: string;
 
     @CreateDateColumn({
         name: 'create_at',

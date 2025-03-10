@@ -11,7 +11,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
     imports: [
         TypeOrmModule.forRoot({
-            name: 'facade-orm',
             type: 'mysql',
             host: '127.0.0.1',
             port: 3306,
@@ -19,6 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             password: 'develjsw1993!@',
             database: 'oop',
             entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
+            logging: ['error', 'warn', 'info', 'log'],
             synchronize: false
         }),
         GoodsModule,
