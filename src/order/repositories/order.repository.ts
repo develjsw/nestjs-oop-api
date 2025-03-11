@@ -18,7 +18,7 @@ export class OrderRepository implements OrderRepositoryInterface {
 
         const insertResult: InsertResult = await currentRepository.insert(order);
 
-        return insertResult?.raw?.orderId || 0;
+        return insertResult?.raw?.insertId || 0;
     }
 
     async findOrderById(orderId: number, manager?: EntityManager): Promise<OrderEntity | null> {

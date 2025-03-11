@@ -10,13 +10,13 @@ import {
     ValidationPipe
 } from '@nestjs/common';
 import { OrderService } from './services/order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderEntity } from './entities/order.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { plainToInstance } from 'class-transformer';
-import { CreateOrderPaymentDto } from './dto/create-order-payment.dto';
+import { CreateOrderDetailPaymentDto } from './dto/create-order-detail-payment.dto';
 import { OrderTransactionService } from './services/order-transaction.service';
-import { PaymentEntity } from '../payment/entities/payment.entity';
+import { OrderDetailEntity } from '../order-detail/entities/order-detail.entity';
+import { CreateOrderDetailDto } from '../order-detail/dto/create-order-detail.dto';
 
 @Controller('orders')
 export class OrderController {
@@ -25,20 +25,24 @@ export class OrderController {
         private readonly orderTransactionService: OrderTransactionService
     ) {}
 
+    @Post()
+    async createFullOrder(
+        @Body(new ValidationPipe({ transform: true })) dto: CreateOrderDetailPaymentDto
+    ): Promise<void> {
+        const { order, orderDetails } = dto;
+
+        const orderInstance: OrderEntity = plainToInstance(OrderEntity, order);
+
+        const orderDetailInstances: OrderDetailEntity[] = orderDetails.map((orderDetail: CreateOrderDetailDto) =>
+            plainToInstance(OrderDetailEntity, orderDetail)
+        );
+
+        await this.orderTransactionService.createOrderWithDetailAndPayment(orderInstance, orderDetailInstances);
+    }
+
     @Get(':orderId')
     async findOrderById(@Param('orderId', ParseIntPipe) orderId: number): Promise<OrderEntity> {
         return await this.orderService.findOrderById(orderId);
-    }
-
-    @Post()
-    async createOrder(
-        @Body(new ValidationPipe({ transform: true })) dto: CreateOrderDto
-    ): Promise<{ orderId: number }> {
-        const orderId: number = await this.orderService.createOrder(dto);
-
-        return {
-            orderId
-        };
     }
 
     @Patch(':orderId')
@@ -53,17 +57,5 @@ export class OrderController {
         const orderInstance: OrderEntity = plainToInstance(OrderEntity, dto);
 
         await this.orderService.updateOrderById(orderId, orderInstance);
-    }
-
-    @Post('with-payments')
-    async createOrderAndPayment(
-        @Body(new ValidationPipe({ transform: true })) dto: CreateOrderPaymentDto
-    ): Promise<void> {
-        const { order, payment } = dto;
-
-        const orderInstance: OrderEntity = plainToInstance(OrderEntity, order);
-        const paymentInstance: PaymentEntity = plainToInstance(PaymentEntity, payment);
-
-        await this.orderTransactionService.createOrderAndPayment(orderInstance, paymentInstance);
     }
 }

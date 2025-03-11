@@ -7,6 +7,6 @@ import { OrderDetailRepository } from './repositories/order-detail.repository';
     imports: [],
     controllers: [OrderDetailController],
     providers: [OrderDetailService, OrderDetailRepository],
-    exports: []
+    exports: [OrderDetailRepository]
 })
 export class OrderDetailModule {}

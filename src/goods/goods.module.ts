@@ -7,6 +7,6 @@ import { GoodsRepository } from './repositories/goods.repository';
     imports: [],
     controllers: [GoodsController],
     providers: [GoodsService, GoodsRepository],
-    exports: []
+    exports: [GoodsRepository]
 })
 export class GoodsModule {}

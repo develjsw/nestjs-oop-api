@@ -20,12 +20,6 @@ export class OrderDetailEntity {
     goodsId: number;
 
     @Column({
-        name: 'quantity',
-        type: 'int'
-    })
-    quantity: number;
-
-    @Column({
         name: 'goods_price',
         type: 'int'
     })

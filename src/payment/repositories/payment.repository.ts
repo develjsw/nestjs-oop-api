@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentRepositoryInterface } from '../interfaces/payment-repository.interface';
 import { PaymentEntity } from '../entities/payment.entity';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, InsertResult, Repository } from 'typeorm';
 
 @Injectable()
 export class PaymentRepository implements PaymentRepositoryInterface {
@@ -11,11 +11,13 @@ export class PaymentRepository implements PaymentRepositoryInterface {
         this.paymentRepository = this.dataSource.getRepository(PaymentEntity);
     }
 
-    async createPayment(payment: Partial<Omit<PaymentEntity, 'paymentId'>>, manager?: EntityManager): Promise<void> {
+    async createPayment(payment: Partial<Omit<PaymentEntity, 'paymentId'>>, manager?: EntityManager): Promise<number> {
         const currentRepository: Repository<PaymentEntity> = manager
             ? manager.getRepository(PaymentEntity)
             : this.paymentRepository;
 
-        await currentRepository.insert(payment);
+        const insertResult: InsertResult = await currentRepository.insert(payment);
+
+        return insertResult?.raw?.insertId || 0;
     }
 }
