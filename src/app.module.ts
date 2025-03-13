@@ -6,6 +6,7 @@ import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from './common/common.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         GoodsModule,
         OrderModule,
         OrderDetailModule,
-        PaymentModule
+        PaymentModule,
+        CommonModule
     ],
     controllers: [AppController],
     providers: [AppService]
