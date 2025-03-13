@@ -5,7 +5,6 @@ import { GoodsModule } from './goods/goods.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
-import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -24,8 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         GoodsModule,
         OrderModule,
         OrderDetailModule,
-        PaymentModule,
-        UserModule
+        PaymentModule
     ],
     controllers: [AppController],
     providers: [AppService]
