@@ -7,6 +7,8 @@ import { OrderDetailEntity } from '../../order-detail/entities/order-detail.enti
 import { OrderDetailRepository } from '../../order-detail/repositories/order-detail.repository';
 import { GoodsRepository } from '../../goods/repositories/goods.repository';
 import { GoodsEntity } from '../../goods/entities/goods.entity';
+import { OrderStatusType } from '../../common/type/order-status.type';
+import { PaymentStatusType } from '../../common/type/payment-status.type';
 
 @Injectable()
 export class OrderTransactionService {
@@ -31,7 +33,7 @@ export class OrderTransactionService {
             const totalPrice: number = goods.reduce((acc: number, cur: GoodsEntity): number => acc + cur.price, 0);
 
             const orderId: number = await this.orderRepository.createOrder(
-                { totalPrice, orderStatus: 'COMPLETE', ...order }, // TODO : 상태값 Enum 관리필요
+                { totalPrice, orderStatus: OrderStatusType.COMPLETE, ...order },
                 manager
             );
             if (!orderId) {
@@ -58,7 +60,10 @@ export class OrderTransactionService {
                 throw new InternalServerErrorException('주문상세 생성에 실패했습니다.');
             }
 
-            await this.paymentRepository.createPayment({ orderId, paymentStatus: 'PENDING' }); // TODO : 상태값 Enum 관리필요
+            await this.paymentRepository.createPayment(
+                { orderId, amount: totalPrice, paymentStatus: PaymentStatusType.PENDING },
+                manager
+            );
         });
     }
 }
