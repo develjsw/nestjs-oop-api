@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { GoodsRepositoryInterface } from '../interfaces/goods-repository.interface';
-import { GoodsEntity } from '../entities/goods.entity';
-import { DataSource, EntityManager, In, InsertResult, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import { GoodsEntity } from '../../entities/goods.entity';
 
 @Injectable()
-export class GoodsRepository implements GoodsRepositoryInterface {
+export class GoodsQueryRepository {
     private readonly goodsRepository: Repository<GoodsEntity>;
 
     constructor(private readonly dataSource: DataSource) {
@@ -25,15 +24,5 @@ export class GoodsRepository implements GoodsRepositoryInterface {
             : this.goodsRepository;
 
         return await currentRepository.find({ where: { goodsId: In(goodsIds) } });
-    }
-
-    async createGoods(goods: Partial<Omit<GoodsEntity, 'goodsId'>>, manager?: EntityManager): Promise<number> {
-        const currentRepository: Repository<GoodsEntity> = manager
-            ? manager.getRepository(GoodsEntity)
-            : this.goodsRepository;
-
-        const insertResult: InsertResult = await currentRepository.insert(goods);
-
-        return insertResult?.raw?.insertId || 0;
     }
 }

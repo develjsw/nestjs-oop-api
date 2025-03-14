@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { OrderDetailRepositoryInterface } from '../interfaces/order-detail-repository.interface';
-import { OrderDetailEntity } from '../entities/order-detail.entity';
 import { DataSource, EntityManager, InsertResult, Repository } from 'typeorm';
+import { OrderDetailEntity } from '../../entities/order-detail.entity';
+import { OrderDetailCommandRepositoryInterface } from '../../interfaces/command/order-detail-command-repository.interface';
 
 @Injectable()
-export class OrderDetailRepository implements OrderDetailRepositoryInterface {
+export class OrderDetailCommandRepository implements OrderDetailCommandRepositoryInterface {
     private readonly orderDetailRepository: Repository<OrderDetailEntity>;
 
     constructor(private readonly dataSource: DataSource) {

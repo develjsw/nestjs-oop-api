@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { OrderEntity } from '../../entities/order.entity';
-import { OrderQueryRepositoryInterface } from '../../interfaces/order-query-repository.interface';
+import { OrderQueryRepositoryInterface } from '../../interfaces/query/order-query-repository.interface';
 
 @Injectable()
 export class OrderQueryRepository implements OrderQueryRepositoryInterface {

@@ -1,4 +1,4 @@
-import { OrderEntity } from '../entities/order.entity';
+import { OrderEntity } from '../../entities/order.entity';
 import { EntityManager } from 'typeorm';
 
 export interface OrderCommandRepositoryInterface {

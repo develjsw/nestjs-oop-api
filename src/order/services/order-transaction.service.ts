@@ -1,23 +1,23 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { PaymentRepository } from '../../payment/repositories/payment.repository';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderDetailEntity } from '../../order-detail/entities/order-detail.entity';
-import { OrderDetailRepository } from '../../order-detail/repositories/order-detail.repository';
-import { GoodsRepository } from '../../goods/repositories/goods.repository';
 import { GoodsEntity } from '../../goods/entities/goods.entity';
 import { OrderStatusType } from '../../common/type/order-status.type';
 import { PaymentStatusType } from '../../common/type/payment-status.type';
 import { OrderCommandRepository } from '../repositories/command/order-command.repository';
+import { GoodsQueryRepository } from '../../goods/repositories/query/goods-query.repository';
+import { OrderDetailCommandRepository } from '../../order-detail/repositories/command/order-detail-command.repository';
+import { PaymentCommandRepository } from '../../payment/repositories/command/payment-command.repository';
 
 @Injectable()
 export class OrderTransactionService {
     constructor(
         private readonly dataSource: DataSource,
-        private readonly goodsRepository: GoodsRepository,
+        private readonly goodsQueryRepository: GoodsQueryRepository,
         private readonly orderCommandRepository: OrderCommandRepository,
-        private readonly orderDetailRepository: OrderDetailRepository,
-        private readonly paymentRepository: PaymentRepository
+        private readonly orderDetailCommandRepository: OrderDetailCommandRepository,
+        private readonly paymentCommandRepository: PaymentCommandRepository
     ) {}
 
     /*
@@ -43,7 +43,7 @@ export class OrderTransactionService {
         orderDetails: Partial<Omit<OrderDetailEntity, 'orderDetailId'>>[]
     ): Promise<void> {
         await this.dataSource.transaction(async (manager: EntityManager) => {
-            const goods: GoodsEntity[] = await this.goodsRepository.findGoodsByIds(
+            const goods: GoodsEntity[] = await this.goodsQueryRepository.findGoodsByIds(
                 orderDetails.map((orderDetails: OrderDetailEntity) => orderDetails.goodsId),
                 manager
             );
@@ -69,7 +69,7 @@ export class OrderTransactionService {
                 };
             });
 
-            const orderDetailIds: number[] = await this.orderDetailRepository.createOrderDetails(
+            const orderDetailIds: number[] = await this.orderDetailCommandRepository.createOrderDetails(
                 orderDetailInstances,
                 manager
             );
@@ -78,7 +78,7 @@ export class OrderTransactionService {
                 throw new InternalServerErrorException('주문상세 생성에 실패했습니다.');
             }
 
-            await this.paymentRepository.createPayment(
+            await this.paymentCommandRepository.createPayment(
                 { orderId, amount: totalPrice, paymentStatus: PaymentStatusType.PENDING },
                 manager
             );

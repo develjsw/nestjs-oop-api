@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './services/payment.service';
 import { PaymentTransactionService } from './services/payment-transaction.service';
-import { PaymentRepository } from './repositories/payment.repository';
+import { PaymentCommandRepository } from './repositories/command/payment-command.repository';
 
 @Module({
     imports: [],
     controllers: [PaymentController],
-    providers: [PaymentService, PaymentRepository, PaymentTransactionService],
+    providers: [PaymentService, PaymentTransactionService, PaymentCommandRepository],
     // order-transaction.service에서 사용 될 목적으로 반환
-    exports: [PaymentRepository]
+    exports: [PaymentCommandRepository]
 })
 export class PaymentModule {}
