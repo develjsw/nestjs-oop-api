@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { OrderRepositoryInterface } from '../interfaces/order-repository.interface';
-import { OrderEntity } from '../entities/order.entity';
 import { DataSource, EntityManager, InsertResult, Repository } from 'typeorm';
+import { OrderEntity } from '../../entities/order.entity';
+import { OrderCommandRepositoryInterface } from '../../interfaces/order-command-repository.interface';
 
 @Injectable()
-export class OrderRepository implements OrderRepositoryInterface {
+export class OrderCommandRepository implements OrderCommandRepositoryInterface {
     private readonly orderRepository: Repository<OrderEntity>;
 
     constructor(private readonly dataSource: DataSource) {
@@ -19,14 +19,6 @@ export class OrderRepository implements OrderRepositoryInterface {
         const insertResult: InsertResult = await currentRepository.insert(order);
 
         return insertResult?.raw?.insertId || 0;
-    }
-
-    async findOrderById(orderId: number, manager?: EntityManager): Promise<OrderEntity | null> {
-        const currentRepository: Repository<OrderEntity> = manager
-            ? manager.getRepository(OrderEntity)
-            : this.orderRepository;
-
-        return await currentRepository.findOne({ where: { orderId } });
     }
 
     async updateOrderById(

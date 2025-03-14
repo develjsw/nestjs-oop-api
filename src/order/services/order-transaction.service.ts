@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { OrderRepository } from '../repositories/order.repository';
 import { PaymentRepository } from '../../payment/repositories/payment.repository';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderDetailEntity } from '../../order-detail/entities/order-detail.entity';
@@ -9,13 +8,14 @@ import { GoodsRepository } from '../../goods/repositories/goods.repository';
 import { GoodsEntity } from '../../goods/entities/goods.entity';
 import { OrderStatusType } from '../../common/type/order-status.type';
 import { PaymentStatusType } from '../../common/type/payment-status.type';
+import { OrderCommandRepository } from '../repositories/command/order-command.repository';
 
 @Injectable()
 export class OrderTransactionService {
     constructor(
         private readonly dataSource: DataSource,
         private readonly goodsRepository: GoodsRepository,
-        private readonly orderRepository: OrderRepository,
+        private readonly orderCommandRepository: OrderCommandRepository,
         private readonly orderDetailRepository: OrderDetailRepository,
         private readonly paymentRepository: PaymentRepository
     ) {}
@@ -50,7 +50,7 @@ export class OrderTransactionService {
 
             const totalPrice: number = goods.reduce((acc: number, cur: GoodsEntity): number => acc + cur.price, 0);
 
-            const orderId: number = await this.orderRepository.createOrder(
+            const orderId: number = await this.orderCommandRepository.createOrder(
                 { totalPrice, orderStatus: OrderStatusType.COMPLETE, ...order },
                 manager
             );
