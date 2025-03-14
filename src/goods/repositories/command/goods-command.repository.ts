@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { GoodsCommandRepositoryInterface } from '../../interfaces/command/goods-command-repository.interface';
 import { GoodsEntity } from '../../entities/goods.entity';
-import { DataSource, EntityManager, InsertResult, Repository } from 'typeorm';
+import { EntityManager, InsertResult, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class GoodsCommandRepository implements GoodsCommandRepositoryInterface {
-    private readonly goodsRepository: Repository<GoodsEntity>;
-
-    constructor(private readonly dataSource: DataSource) {
-        this.goodsRepository = this.dataSource.getRepository(GoodsEntity);
-    }
+    constructor(
+        @InjectRepository(GoodsEntity, 'master-db')
+        private readonly goodsRepository: Repository<GoodsEntity>
+    ) {}
 
     async createGoods(goods: Partial<Omit<GoodsEntity, 'goodsId'>>, manager?: EntityManager): Promise<number> {
         const currentRepository: Repository<GoodsEntity> = manager

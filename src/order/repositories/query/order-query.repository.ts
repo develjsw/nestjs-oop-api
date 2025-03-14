@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { OrderEntity } from '../../entities/order.entity';
 import { OrderQueryRepositoryInterface } from '../../interfaces/query/order-query-repository.interface';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrderQueryRepository implements OrderQueryRepositoryInterface {
-    private readonly orderRepository: Repository<OrderEntity>;
-
-    constructor(private readonly dataSource: DataSource) {
-        this.orderRepository = this.dataSource.getRepository(OrderEntity);
-    }
+    constructor(
+        @InjectRepository(OrderEntity, 'slave-db')
+        private readonly orderRepository: Repository<OrderEntity>
+    ) {}
 
     async findOrderById(orderId: number, manager?: EntityManager): Promise<OrderEntity | null> {
         const currentRepository: Repository<OrderEntity> = manager

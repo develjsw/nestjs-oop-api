@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, InsertResult, Repository } from 'typeorm';
+import { EntityManager, InsertResult, Repository } from 'typeorm';
 import { PaymentEntity } from '../../entities/payment.entity';
 import { PaymentCommandRepositoryInterface } from '../../interfaces/command/payment-command-repository.interface';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PaymentCommandRepository implements PaymentCommandRepositoryInterface {
-    private readonly paymentRepository: Repository<PaymentEntity>;
-
-    constructor(private readonly dataSource: DataSource) {
-        this.paymentRepository = this.dataSource.getRepository(PaymentEntity);
-    }
+    constructor(
+        @InjectRepository(PaymentEntity, 'master-db')
+        private readonly paymentRepository: Repository<PaymentEntity>
+    ) {}
 
     async createPayment(payment: Partial<Omit<PaymentEntity, 'paymentId'>>, manager?: EntityManager): Promise<number> {
         const currentRepository: Repository<PaymentEntity> = manager

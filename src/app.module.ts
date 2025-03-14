@@ -11,12 +11,25 @@ import { CommonModule } from './common/common.module';
 @Module({
     imports: [
         TypeOrmModule.forRoot({
+            name: 'master-db',
             type: 'mysql',
             host: '127.0.0.1',
             port: 3306,
             username: 'root',
             password: 'develjsw1993!@',
             database: 'oop',
+            entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
+            logging: ['error', 'warn', 'info', 'log'],
+            synchronize: false
+        }),
+        TypeOrmModule.forRoot({
+            name: 'slave-db',
+            type: 'mysql',
+            host: '127.0.0.1',
+            port: 3306,
+            username: 'root',
+            password: 'develjsw1993!@',
+            database: 'oop-slave',
             entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
             logging: ['error', 'warn', 'info', 'log'],
             synchronize: false

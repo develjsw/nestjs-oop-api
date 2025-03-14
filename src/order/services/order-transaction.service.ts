@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderDetailEntity } from '../../order-detail/entities/order-detail.entity';
 import { GoodsEntity } from '../../goods/entities/goods.entity';
@@ -9,11 +9,30 @@ import { OrderCommandRepository } from '../repositories/command/order-command.re
 import { GoodsQueryRepository } from '../../goods/repositories/query/goods-query.repository';
 import { OrderDetailCommandRepository } from '../../order-detail/repositories/command/order-detail-command.repository';
 import { PaymentCommandRepository } from '../../payment/repositories/command/payment-command.repository';
+import { InjectEntityManager } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrderTransactionService {
     constructor(
-        private readonly dataSource: DataSource,
+        @InjectEntityManager('master-db')
+        private readonly masterEntityManager: EntityManager,
+
+        /*
+            [ Slave DB의 별도 커넥션을 주입받을 필요가 없는 이유 ]
+
+            - 트랜잭션 내에서 실행되는 모든 `SELECT`는 Master DB에서 실행되어야 함
+                → 이유: 트랜잭션 내에서 실행되는 `SELECT`는 최신 데이터 일관성을 보장해야 하므로, Master DB에서만 조회 가능
+                → Slave DB의 Replication Lag(복제 지연)으로 인해, 트랜잭션 내에서 최신 데이터가 보장되지 않을 수 있음
+
+            - 트랜잭션 외부에서 실행되는 `SELECT`는 Slave DB에서 실행 가능
+                → 이유: 트랜잭션이 종료된 후, Master의 데이터가 Slave에 복제될 시간이 있기 때문
+                → 즉, 트랜잭션 종료 후 조회하는 `SELECT`는 Slave DB에서 실행해도 괜찮음
+
+            - 따라서, 트랜잭션 내에서 `SELECT`가 필요한 경우에는 Master DB를 바라보게 하여 데이터의 최신성과 일관성을 보장함
+        */
+        // @InjectEntityManager('slave-db')
+        // private readonly slaveEntityManager: EntityManager,
+
         private readonly goodsQueryRepository: GoodsQueryRepository,
         private readonly orderCommandRepository: OrderCommandRepository,
         private readonly orderDetailCommandRepository: OrderDetailCommandRepository,
@@ -42,14 +61,19 @@ export class OrderTransactionService {
         order: Partial<Omit<OrderEntity, 'orderId'>>,
         orderDetails: Partial<Omit<OrderDetailEntity, 'orderDetailId'>>[]
     ): Promise<void> {
-        await this.dataSource.transaction(async (manager: EntityManager) => {
-            const goods: GoodsEntity[] = await this.goodsQueryRepository.findGoodsByIds(
-                orderDetails.map((orderDetails: OrderDetailEntity) => orderDetails.goodsId),
-                manager
-            );
+        /*
+            외부에서 사용될 조회쿼리로 별도의 manager(=connection)을 매개변수로 보내고 있지 않기 때문에
+            GoodsQueryRepository에 설정한 @InjectRepository(GoodsEntity, 'slave-db')로 인해 디폴트는 slave-db를 바라봄
 
-            const totalPrice: number = goods.reduce((acc: number, cur: GoodsEntity): number => acc + cur.price, 0);
+            만약, 조회쿼리가 transaction 내에서 동작되야 할 경우에는 manager를 보내줘서 master-db를 바라볼 수 있도록 만들어주면 됨
+        */
+        const goods: GoodsEntity[] = await this.goodsQueryRepository.findGoodsByIds(
+            orderDetails.map((orderDetails: OrderDetailEntity) => orderDetails.goodsId)
+        );
 
+        const totalPrice: number = goods.reduce((acc: number, cur: GoodsEntity): number => acc + cur.price, 0);
+
+        await this.masterEntityManager.transaction(async (manager: EntityManager) => {
             const orderId: number = await this.orderCommandRepository.createOrder(
                 { totalPrice, orderStatus: OrderStatusType.COMPLETE, ...order },
                 manager

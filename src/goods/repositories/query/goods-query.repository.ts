@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { GoodsEntity } from '../../entities/goods.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class GoodsQueryRepository {
-    private readonly goodsRepository: Repository<GoodsEntity>;
-
-    constructor(private readonly dataSource: DataSource) {
-        this.goodsRepository = this.dataSource.getRepository(GoodsEntity);
-    }
+    constructor(
+        /*
+            - Default Connection : Slave-DB (CQRS Pattern 적용)
+            - 아래 각각의 메소드에서 manager로 받고 있는 부분을 통해 Master-DB 등 Connection은 변경될 수 있도록 함
+        */
+        @InjectRepository(GoodsEntity, 'slave-db')
+        private readonly goodsRepository: Repository<GoodsEntity>
+    ) {}
 
     async findGoodsById(goodsId: number, manager?: EntityManager): Promise<GoodsEntity | null> {
         const currentRepository: Repository<GoodsEntity> = manager
