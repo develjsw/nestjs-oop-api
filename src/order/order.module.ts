@@ -8,6 +8,7 @@ import { OrderDetailModule } from '../order-detail/order-detail.module';
 import { PaymentModule } from '../payment/payment.module';
 
 @Module({
+    // 모듈간 의존성 발생
     imports: [GoodsModule, OrderDetailModule, PaymentModule],
     controllers: [OrderController],
     providers: [OrderService, OrderRepository, OrderTransactionService],

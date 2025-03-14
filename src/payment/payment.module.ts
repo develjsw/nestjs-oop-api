@@ -8,6 +8,7 @@ import { PaymentRepository } from './repositories/payment.repository';
     imports: [],
     controllers: [PaymentController],
     providers: [PaymentService, PaymentRepository, PaymentTransactionService],
+    // order-transaction.service에서 사용 될 목적으로 반환
     exports: [PaymentRepository]
 })
 export class PaymentModule {}
