@@ -7,9 +7,26 @@ import { PaymentModule } from './payment/payment.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
+import * as path from 'path';
+import { ConfigModule } from '@nestjs/config';
+
+let envFile = 'env.local';
+switch (process.env.NODE_ENV) {
+    case 'production':
+        envFile = 'env.production';
+        break;
+    case 'development':
+        envFile = 'env.development';
+        break;
+}
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            envFilePath: [path.resolve(__dirname, `../${envFile}`)],
+            isGlobal: true,
+            cache: true
+        }),
         TypeOrmModule.forRoot({
             name: 'master-db',
             type: 'mysql',
