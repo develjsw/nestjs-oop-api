@@ -9,6 +9,7 @@ import { CommonModule } from './common/common.module';
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { CacheModule } from './cache/cache.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -28,6 +29,7 @@ switch (process.env.NODE_ENV) {
             cache: true
         }),
         DatabaseModule,
+        CacheModule,
         GoodsModule,
         OrderModule,
         OrderDetailModule,
