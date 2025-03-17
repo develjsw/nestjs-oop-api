@@ -8,8 +8,7 @@ export class RedisClientProvider implements OnModuleInit, OnModuleDestroy {
 
     constructor(private readonly configService: ConfigService) {
         this.client = createClient({
-            url: `redis://${configService.get<string>('redis.host')}:${configService.get<number>('redis.port')}`,
-            password: configService.get<string>('redis.password')
+            url: `redis://${configService.get<string>('redis.host')}:${configService.get<number>('redis.port')}`
         });
     }
 
