@@ -5,10 +5,10 @@ import { GoodsModule } from './goods/goods.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -27,30 +27,7 @@ switch (process.env.NODE_ENV) {
             isGlobal: true,
             cache: true
         }),
-        TypeOrmModule.forRoot({
-            name: 'master-db',
-            type: 'mysql',
-            host: '127.0.0.1',
-            port: 3306,
-            username: 'root',
-            password: 'develjsw1993!@',
-            database: 'oop',
-            entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
-            logging: ['error', 'warn', 'info', 'log'],
-            synchronize: false
-        }),
-        TypeOrmModule.forRoot({
-            name: 'slave-db',
-            type: 'mysql',
-            host: '127.0.0.1',
-            port: 3306,
-            username: 'root',
-            password: 'develjsw1993!@',
-            database: 'oop-slave',
-            entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
-            logging: ['error', 'warn', 'info', 'log'],
-            synchronize: false
-        }),
+        DatabaseModule,
         GoodsModule,
         OrderModule,
         OrderDetailModule,
