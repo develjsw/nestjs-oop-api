@@ -1,10 +1,11 @@
 import { HashCacheServiceInterface } from '../interfaces/hash-cache-service.interface';
 import { Injectable } from '@nestjs/common';
 import { RedisClientProvider } from './redis-client.provider';
+import { RedisClientType } from 'redis';
 
 @Injectable()
 export class HashCacheService implements HashCacheServiceInterface {
-    private readonly client;
+    private readonly client: RedisClientType;
 
     constructor(private readonly redisClientProvider: RedisClientProvider) {
         this.client = this.redisClientProvider.getClient();
