@@ -10,6 +10,7 @@ import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { CacheModule } from './cache/cache.module';
+import { ExceptionModule } from './exception/exception.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -30,6 +31,7 @@ switch (process.env.NODE_ENV) {
         }),
         DatabaseModule,
         CacheModule,
+        ExceptionModule,
         GoodsModule,
         OrderModule,
         OrderDetailModule,
