@@ -1,8 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CacheServiceInterface } from '../../cache/interfaces/cache-service.interface';
 import { GoodsEntity } from '../entities/goods.entity';
 import { GoodsQueryRepository } from '../repositories/query/goods-query.repository';
 import { GoodsServiceInterface } from '../interfaces/goods-service.interface';
+import { GoodsCommandRepository } from '../repositories/command/goods-command.repository';
 
 @Injectable()
 export class GoodsService implements GoodsServiceInterface {
@@ -11,7 +12,8 @@ export class GoodsService implements GoodsServiceInterface {
         @Inject('ICacheService')
         private readonly cacheService: CacheServiceInterface,
 
-        private readonly goodsQueryRepository: GoodsQueryRepository
+        private readonly goodsQueryRepository: GoodsQueryRepository,
+        private readonly goodsCommandRepository: GoodsCommandRepository
     ) {}
 
     // 변경이 적고, 자주 조회되는 상품 조회 기능에 Cache Aside Pattern 적용
@@ -31,5 +33,12 @@ export class GoodsService implements GoodsServiceInterface {
         await this.cacheService.set(cacheKey, goods, 60 * 15);
 
         return goods;
+    }
+
+    async createGoods(goods: Partial<GoodsEntity>): Promise<void> {
+        const goodsId: number = await this.goodsCommandRepository.createGoods(goods);
+        if (!goodsId) {
+            throw new InternalServerErrorException('상품 생성에 실패했습니다.');
+        }
     }
 }
