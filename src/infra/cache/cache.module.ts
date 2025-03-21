@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { redisConfig } from '../config/redis.config';
-import { RedisClientProvider } from './servicies/redis-client.provider';
-import { CacheService } from './servicies/cache.service';
-import { HashCacheService } from './servicies/hash-cache.service';
-import { ListCacheService } from './servicies/list-cache.service';
-import { SetCacheService } from './servicies/set-cache.service';
+import { RedisProvider } from './provider/redis.provider';
+import { CacheService } from './service/cache.service';
+import { HashCacheService } from './service/hash-cache.service';
+import { ListCacheService } from './service/list-cache.service';
+import { SetCacheService } from './service/set-cache.service';
 
 @Module({
     imports: [ConfigModule.forFeature(redisConfig)],
     providers: [
-        RedisClientProvider,
+        RedisProvider,
         /*
            [ 인터페이스 기반 의존성 주입 ]
            - 모듈 간 의존성 최소화를 위해 구체적인 클래스(CacheService)를 직접 주입받지 않고, 인터페이스(CacheServiceInterface)를 통해 주입받음

@@ -5,7 +5,7 @@ import { GoodsCommandRepository } from './repositories/command/goods-command.rep
 import { GoodsQueryRepository } from './repositories/query/goods-query.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GoodsEntity } from './entities/goods.entity';
-import { CacheModule } from '../cache/cache.module';
+import { CacheModule } from '../../infra/cache/cache.module';
 
 @Module({
     imports: [

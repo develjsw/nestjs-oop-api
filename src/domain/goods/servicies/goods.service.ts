@@ -1,5 +1,5 @@
 import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { CacheServiceInterface } from '../../cache/interfaces/cache-service.interface';
+import { CacheServiceInterface } from '../../../infra/cache/interface/cache-service.interface';
 import { GoodsEntity } from '../entities/goods.entity';
 import { GoodsQueryRepository } from '../repositories/query/goods-query.repository';
 import { GoodsServiceInterface } from '../interfaces/goods-service.interface';
