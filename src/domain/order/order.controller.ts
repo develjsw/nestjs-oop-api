@@ -9,13 +9,13 @@ import {
     Post,
     ValidationPipe
 } from '@nestjs/common';
-import { OrderService } from './services/order.service';
-import { OrderEntity } from './entities/order.entity';
+import { OrderService } from './service/order.service';
+import { OrderEntity } from './entity/order.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { plainToInstance } from 'class-transformer';
 import { CreateOrderDetailPaymentDto } from './dto/create-order-detail-payment.dto';
-import { OrderTransactionService } from './services/order-transaction.service';
-import { OrderDetailEntity } from '../order-detail/entities/order-detail.entity';
+import { OrderTransactionService } from './service/order-transaction.service';
+import { OrderDetailEntity } from '../order-detail/entity/order-detail.entity';
 import { CreateOrderDetailDto } from '../order-detail/dto/create-order-detail.dto';
 
 @Controller('orders')

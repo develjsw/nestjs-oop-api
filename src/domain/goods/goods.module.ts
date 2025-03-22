@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GoodsController } from './goods.controller';
-import { GoodsService } from './servicies/goods.service';
-import { GoodsCommandRepository } from './repositories/command/goods-command.repository';
-import { GoodsQueryRepository } from './repositories/query/goods-query.repository';
+import { GoodsService } from './service/goods.service';
+import { GoodsCommandRepository } from './repository/command/goods-command.repository';
+import { GoodsQueryRepository } from './repository/query/goods-query.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GoodsEntity } from './entities/goods.entity';
+import { GoodsEntity } from './entity/goods.entity';
 import { CacheModule } from '../../infra/cache/cache.module';
 
 @Module({

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { OrderDetailController } from './order-detail.controller';
-import { OrderDetailService } from './services/order-detail.service';
-import { OrderDetailCommandRepository } from './repositories/command/order-detail-command.repository';
+import { OrderDetailService } from './service/order-detail.service';
+import { OrderDetailCommandRepository } from './repository/command/order-detail-command.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrderDetailEntity } from './entities/order-detail.entity';
+import { OrderDetailEntity } from './entity/order-detail.entity';
 
 @Module({
     imports: [

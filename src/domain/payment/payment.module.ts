@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PaymentController } from './payment.controller';
-import { PaymentService } from './services/payment.service';
-import { PaymentTransactionService } from './services/payment-transaction.service';
-import { PaymentCommandRepository } from './repositories/command/payment-command.repository';
+import { PaymentService } from './service/payment.service';
+import { PaymentTransactionService } from './service/payment-transaction.service';
+import { PaymentCommandRepository } from './repository/command/payment-command.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PaymentEntity } from './entities/payment.entity';
+import { PaymentEntity } from './entity/payment.entity';
 
 @Module({
     imports: [

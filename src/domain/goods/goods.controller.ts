@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, ValidationPipe } from '@nestjs/common';
-import { GoodsService } from './servicies/goods.service';
-import { GoodsEntity } from './entities/goods.entity';
+import { GoodsService } from './service/goods.service';
+import { GoodsEntity } from './entity/goods.entity';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { plainToInstance } from 'class-transformer';
 
