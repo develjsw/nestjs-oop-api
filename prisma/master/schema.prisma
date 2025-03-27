@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../prisma/generated/master-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("MASTER_DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model goods {
+  goods_id     Int            @id @default(autoincrement()) @db.UnsignedInt
+  goods_name   String         @db.VarChar(100)
+  price        Int            @default(0) @db.UnsignedInt
+  create_at    DateTime       @default(dbgenerated("(now())")) @db.DateTime(0)
+  update_at    DateTime?      @default(dbgenerated("(now())")) @db.DateTime(0)
+  order_detail order_detail[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model order {
+  order_id     Int            @id @default(autoincrement()) @db.UnsignedInt
+  user_id      Int            @db.UnsignedInt
+  total_price  Int            @db.UnsignedInt
+  order_status String         @default("PENDING") @db.VarChar(10)
+  create_at    DateTime       @default(dbgenerated("(now())")) @db.DateTime(0)
+  update_at    DateTime?      @default(dbgenerated("(now())")) @db.DateTime(0)
+  user         user           @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_order_user")
+  order_detail order_detail[]
+  payment      payment[]
+
+  @@index([user_id], map: "FK_order_user")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model order_detail {
+  order_detail_id Int      @id @default(autoincrement()) @db.UnsignedInt
+  order_id        Int      @db.UnsignedInt
+  goods_id        Int      @db.UnsignedInt
+  goods_price     Int      @db.UnsignedInt
+  create_at       DateTime @default(dbgenerated("(now())")) @db.DateTime(0)
+  goods           goods    @relation(fields: [goods_id], references: [goods_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_order_detail_goods")
+  order           order    @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_order_detail_order")
+
+  @@index([goods_id], map: "FK_order_detail_goods")
+  @@index([order_id], map: "FK_order_detail_order")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payment {
+  payment_id     Int      @id @default(autoincrement()) @db.UnsignedInt
+  order_id       Int      @db.UnsignedInt
+  amount         Int      @db.UnsignedInt
+  payment_status String   @default("PENDING") @db.VarChar(10)
+  create_at      DateTime @default(dbgenerated("(now())")) @db.DateTime(0)
+  order          order    @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_payment_order")
+
+  @@index([order_id], map: "FK_payment_order")
+}
+
+model user {
+  user_id   Int       @id @default(autoincrement()) @db.UnsignedInt
+  user_name String    @db.VarChar(50)
+  create_at DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
+  update_at DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
+  order     order[]
+}
