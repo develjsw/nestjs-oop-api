@@ -7,8 +7,7 @@ export class PrismaMasterService extends PrismaMasterClient implements OnModuleI
         super({
             datasources: {
                 db: {
-                    // TODO : Config로 빼야 할지는 고민 필요
-                    url: process.env.NET_MASTER_DATABASE_URL
+                    url: process.env.MASTER_DATABASE_URL
                 }
             },
             log: ['query', 'info', 'warn', 'error']

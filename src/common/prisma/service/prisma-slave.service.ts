@@ -7,8 +7,7 @@ export class PrismaSlaveService extends PrismaSlaveClient implements OnModuleIni
         super({
             datasources: {
                 db: {
-                    // TODO : Config로 빼야 할지는 고민 필요
-                    url: process.env.NET_SLAVE_DATABASE_URL
+                    url: process.env.SLAVE_DATABASE_URL
                 }
             },
             log: ['query', 'info', 'warn', 'error']
