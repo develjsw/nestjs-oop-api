@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from './common/cache/cache.module';
+import { LifecycleModule } from './core/lifecycle/lifecycle.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -22,7 +23,8 @@ switch (process.env.NODE_ENV) {
             isGlobal: true,
             cache: true
         }),
-        CacheModule
+        CacheModule,
+        LifecycleModule
     ],
     controllers: [AppController],
     providers: [AppService]
