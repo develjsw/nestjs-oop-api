@@ -5,6 +5,7 @@ import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from './common/cache/cache.module';
 import { LifecycleModule } from './core/lifecycle/lifecycle.module';
+import { TestModule } from './module/test/test.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -24,7 +25,8 @@ switch (process.env.NODE_ENV) {
             cache: true
         }),
         CacheModule,
-        LifecycleModule
+        LifecycleModule,
+        TestModule
     ],
     controllers: [AppController],
     providers: [AppService]
