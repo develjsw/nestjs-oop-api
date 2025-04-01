@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from './common/cache/cache.module';
 import { LifecycleModule } from './core/lifecycle/lifecycle.module';
 import { TestModule } from './module/test/test.module';
+import { AuthModule } from './module/auth/auth.module';
+import { JwtClientModule } from './module/jwt/jwt-client.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -26,7 +28,9 @@ switch (process.env.NODE_ENV) {
         }),
         CacheModule,
         LifecycleModule,
-        TestModule
+        TestModule,
+        AuthModule,
+        JwtClientModule
     ],
     controllers: [AppController],
     providers: [AppService]
