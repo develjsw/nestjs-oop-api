@@ -3,6 +3,8 @@
 - 구조 및 패턴
   - Layered Architecture
   - CQRS Pattern
+    - Master DB와 Slave DB 간의 동기화는 DB 레벨의 Master-Replica 구조를 통해 자동으로 이루어 진다고 가정
+    - 이에 따라, 애플리케이션 차원에서 Queue 시스템으로 별도의 동기화하는 작업은 수행하지 않음 
   - Prisma ORM
     - Master DB / Slave DB 분리 구조
   
