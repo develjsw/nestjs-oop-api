@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { ShutdownHandler } from './core/lifecycle/shutdown.handler';
 import { SerializeInterceptor } from './common/interceptor/serialize-interceptor';
 import { ConfigService } from '@nestjs/config';
+import { ResponseFormatInterceptor } from './common/interceptor/response-format.interceptor';
 
 async function bootstrap() {
     const app: INestApplication = await NestFactory.create(AppModule);
@@ -12,7 +13,7 @@ async function bootstrap() {
 
     app.get(ShutdownHandler).subscribeToShutdown(() => app.close());
 
-    app.useGlobalInterceptors(new SerializeInterceptor());
+    app.useGlobalInterceptors(new SerializeInterceptor(), new ResponseFormatInterceptor());
 
     const configService: ConfigService = app.get(ConfigService);
 
