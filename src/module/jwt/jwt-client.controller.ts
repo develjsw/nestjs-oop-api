@@ -1,6 +1,7 @@
-import { Controller, Post, Headers, Body, ValidationPipe, Get } from '@nestjs/common';
+import { Controller, Post, Headers, Body, ValidationPipe, Get, Query } from '@nestjs/common';
 import { JwtClientService } from './service/jwt-client.service';
 import { CreateJwtDto } from './dto/create-jwt.dto';
+import { VerifyJwtDto } from './dto/verify-jwt.dto';
 
 @Controller('jwts')
 export class JwtClientController {
@@ -32,7 +33,13 @@ export class JwtClientController {
         };
     }
 
+    @Get('verify')
+    async verifyJwt(@Query(new ValidationPipe()) dto: VerifyJwtDto, @Headers('Authorization') authHeader: string) {
+        const { tokenType } = dto;
+
+        return await this.jwtClientService.verifyJwt(authHeader, tokenType);
+    }
+
     // TODO : 작업중
-    @Get()
-    async verifyJwt(): Promise<void> {}
+    async refreshJwt() {}
 }

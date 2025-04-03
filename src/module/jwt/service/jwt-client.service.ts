@@ -1,7 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignOptions } from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
+import { TokenTypeEnum } from '../enum/token-type.enum';
 
 @Injectable()
 export class JwtClientService {
@@ -59,5 +60,26 @@ export class JwtClientService {
             .catch((error) => {
                 throw new InternalServerErrorException(error.message);
             });
+    }
+
+    async verifyJwt(authHeader: string, tokenType: TokenTypeEnum): Promise<any> {
+        const [scheme, token] = authHeader.split(' ');
+
+        if (scheme !== 'Bearer' || !token) {
+            throw new BadRequestException('잘못된 토큰 정보입니다.');
+        }
+
+        const payload = await this.jwtService
+            .verifyAsync(token, { secret: this.secret })
+            .then((response) => response)
+            .catch((error) => {
+                throw new UnauthorizedException(error.message);
+            });
+
+        if (payload?.tokenType !== tokenType) {
+            throw new UnauthorizedException('토큰 타입이 일치하지 않습니다.');
+        }
+
+        return payload;
     }
 }
