@@ -8,7 +8,6 @@ export class ResponseFormatInterceptor implements NestInterceptor {
         return next.handle().pipe(
             map((data) => {
                 return {
-                    success: true,
                     ...(data && { data })
                 };
             })
