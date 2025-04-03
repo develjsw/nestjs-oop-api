@@ -65,7 +65,7 @@ export class JwtClientService {
     async verifyJwt(authHeader: string, tokenType: TokenTypeEnum): Promise<any> {
         const [scheme, token] = authHeader.split(' ');
 
-        if (scheme !== 'Bearer' || !token) {
+        if (scheme?.toLowerCase() !== 'bearer' || !token) {
             throw new BadRequestException('잘못된 토큰 정보입니다.');
         }
 

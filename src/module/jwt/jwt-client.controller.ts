@@ -2,6 +2,7 @@ import { Controller, Post, Headers, Body, ValidationPipe, Get, Query } from '@ne
 import { JwtClientService } from './service/jwt-client.service';
 import { CreateJwtDto } from './dto/create-jwt.dto';
 import { VerifyJwtDto } from './dto/verify-jwt.dto';
+import { TokenTypeEnum } from './enum/token-type.enum';
 
 @Controller('jwts')
 export class JwtClientController {
@@ -40,6 +41,26 @@ export class JwtClientController {
         return await this.jwtClientService.verifyJwt(authHeader, tokenType);
     }
 
-    // TODO : 작업중
-    async refreshJwt() {}
+    @Post('refresh')
+    async refreshJwt(@Headers('Authorization') authHeader: string) {
+        const refreshTokenPayload = await this.jwtClientService.verifyJwt(authHeader, TokenTypeEnum.REFRESH_TOKEN);
+
+        const { memberId } = refreshTokenPayload;
+        const newAccessToken = await this.jwtClientService.createJwt(
+            { memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
+            { expiresIn: 60 * 5 }
+        );
+        const newRefreshToken = await this.jwtClientService.createJwt(
+            { memberId, tokenType: TokenTypeEnum.REFRESH_TOKEN },
+            { expiresIn: 60 * 60 * 24 * 30 }
+        );
+
+        // TODO : 기존 리프레시 토큰 무효화
+        console.log(refreshTokenPayload);
+
+        return {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken
+        };
+    }
 }
