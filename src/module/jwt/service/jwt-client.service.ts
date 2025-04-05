@@ -17,7 +17,7 @@ export class JwtClientService {
     // [ onModuleInit 대신 loadSecretKey()를 사용하여 키 검증한 이유 ]
     // 디버깅(핫 리로드) 시 소스코드 변경마다 생성자가 다시 실행되므로 매번 키 유효성을 검증할 수 있어 더 안전함
     private loadSecretKey(): string {
-        const secretKey = this.configService.get<string>('JWT_SECRET_KEY');
+        const secretKey: string = this.configService.get<string>('JWT_SECRET_KEY');
         if (!secretKey) {
             throw new Error('JWT_SECRET_KEY가 없습니다.');
         }
