@@ -9,7 +9,7 @@ export class JwtClientController {
     constructor(private readonly jwtClientService: JwtClientService) {}
 
     @Post()
-    async createJsonWebToken(@Body(new ValidationPipe({ transform: true })) dto: CreateJwtDto) {
+    async createJwt(@Body(new ValidationPipe({ transform: true })) dto: CreateJwtDto) {
         const { memberId } = dto;
 
         const accessTokenPayload = {
@@ -21,10 +21,10 @@ export class JwtClientController {
             tokenType: 'refreshToken'
         };
 
-        const accessToken = await this.jwtClientService.createJwt(accessTokenPayload, {
+        const accessToken: string = await this.jwtClientService.createJwt(accessTokenPayload, {
             expiresIn: 60 * 5
         });
-        const refreshToken = await this.jwtClientService.createJwt(refreshTokenPayload, {
+        const refreshToken: string = await this.jwtClientService.createJwt(refreshTokenPayload, {
             expiresIn: 60 * 60 * 24 * 30
         });
 
@@ -46,11 +46,11 @@ export class JwtClientController {
         const refreshTokenPayload = await this.jwtClientService.verifyJwt(authHeader, TokenTypeEnum.REFRESH_TOKEN);
 
         const { memberId } = refreshTokenPayload;
-        const newAccessToken = await this.jwtClientService.createJwt(
+        const newAccessToken: string = await this.jwtClientService.createJwt(
             { memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
             { expiresIn: 60 * 5 }
         );
-        const newRefreshToken = await this.jwtClientService.createJwt(
+        const newRefreshToken: string = await this.jwtClientService.createJwt(
             { memberId, tokenType: TokenTypeEnum.REFRESH_TOKEN },
             { expiresIn: 60 * 60 * 24 * 30 }
         );

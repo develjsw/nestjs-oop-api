@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SignOptions } from 'jsonwebtoken';
+import { SignOptions, JwtPayload } from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { TokenTypeEnum } from '../enum/token-type.enum';
 
@@ -51,25 +51,24 @@ export class JwtClientService {
         };
     }*/
 
-    async createJwt(payload: object, options?: SignOptions): Promise<string | void> {
+    async createJwt(payload: Record<string, any>, options?: SignOptions): Promise<string> {
         const option = { secret: this.secret, ...options };
 
-        return await this.jwtService
-            .signAsync(payload, option)
-            .then((response: string) => response)
-            .catch((error) => {
-                throw new InternalServerErrorException(error.message);
-            });
+        try {
+            return await this.jwtService.signAsync(payload, option);
+        } catch (error) {
+            throw new InternalServerErrorException(error.message);
+        }
     }
 
-    async verifyJwt(authHeader: string, tokenType: TokenTypeEnum): Promise<any> {
+    async verifyJwt(authHeader: string, tokenType: TokenTypeEnum): Promise<JwtPayload> {
         const [scheme, token] = authHeader.split(' ');
 
         if (scheme?.toLowerCase() !== 'bearer' || !token) {
             throw new BadRequestException('잘못된 토큰 정보입니다.');
         }
 
-        const payload = await this.jwtService
+        const payload: JwtPayload = await this.jwtService
             .verifyAsync(token, { secret: this.secret })
             .then((response) => response)
             .catch((error) => {
