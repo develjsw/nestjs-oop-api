@@ -1,4 +1,14 @@
-import { Controller, Post, Headers, Body, ValidationPipe, Get, Query, Inject } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Headers,
+    Body,
+    ValidationPipe,
+    Get,
+    Query,
+    Inject,
+    UnauthorizedException
+} from '@nestjs/common';
 import { JwtClientService } from './service/jwt-client.service';
 import { CreateJwtDto } from './dto/create-jwt.dto';
 import { VerifyJwtDto } from './dto/verify-jwt.dto';
@@ -54,11 +64,14 @@ export class JwtClientController {
     async refreshJwt(@Headers('Authorization') authHeader: string) {
         const refreshTokenPayload = await this.jwtClientService.verifyJwt(authHeader, TokenTypeEnum.REFRESH_TOKEN);
 
-        // TODO : 1. refresh token redis 조회
-        // TODO : 1-1. 없는 경우 - UnauthorizedException
-        // TODO : 1-2. 있는 경우 - accessToken + refreshToken 발급 - 아래 로직에 이미 구현됨
-
         const { memberId } = refreshTokenPayload;
+        const [_, refreshToken] = authHeader.split(' ');
+
+        const cacheRefreshToken: string = await this.cacheService.get(`refresh:${memberId}`);
+        if (cacheRefreshToken !== refreshToken) {
+            throw new UnauthorizedException('유효하지 않은 refresh token 입니다.');
+        }
+
         const newAccessToken: string = await this.jwtClientService.createJwt(
             { memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
             { expiresIn: 60 * 5 }
@@ -68,8 +81,8 @@ export class JwtClientController {
             { expiresIn: 60 * 60 * 24 * 30 }
         );
 
-        // TODO : 2. 기존 refresh token 무효화 (= redis 삭제)
-        // TODO : 3. 신규 refresh token 생성 (= redis 추가)
+        await this.cacheService.del(`refresh:${memberId}`); // 없어도 동일하게 동작하나 명시적으로 삭제처리
+        await this.cacheService.set(`refresh:${memberId}`, newRefreshToken, 60 * 60 * 24 * 30);
 
         return {
             accessToken: newAccessToken,
