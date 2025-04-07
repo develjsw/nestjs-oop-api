@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { JwtClientService } from './service/jwt-client.service';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtClientController } from './jwt-client.controller';
+import { JwtModule } from '../../common/jwt/jwt.module';
 import { CacheModule } from '../../common/cache/cache.module';
+import { JwtClientController } from './jwt-client.controller';
+import { JwtClientService } from './service/jwt-client.service';
 
 @Module({
     imports: [JwtModule, CacheModule],

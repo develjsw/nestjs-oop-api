@@ -7,6 +7,7 @@ import { CacheModule } from './common/cache/cache.module';
 import { LifecycleModule } from './core/lifecycle/lifecycle.module';
 import { TestModule } from './module/test/test.module';
 import { AuthModule } from './module/auth/auth.module';
+import { JwtModule } from './common/jwt/jwt.module';
 import { JwtClientModule } from './module/jwt/jwt-client.module';
 
 let envFile = 'env.local';
@@ -30,6 +31,7 @@ switch (process.env.NODE_ENV) {
         LifecycleModule,
         TestModule,
         AuthModule,
+        JwtModule,
         JwtClientModule
     ],
     controllers: [AppController],

@@ -1,84 +1,60 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { SignOptions, JwtPayload } from 'jsonwebtoken';
-import { ConfigService } from '@nestjs/config';
-import { TokenTypeEnum } from '../enum/token-type.enum';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CacheServiceInterface } from '../../../common/cache/interface/cache-service.interface';
+import { JwtServiceInterface } from '../../../common/jwt/interface/jwt-service.interface';
+import { TokenTypeEnum } from '../../../common/jwt/enum/token-type.enum';
+import { JwtPayload } from 'jsonwebtoken';
+import { JWT_SERVICE } from '../../../common/jwt/constant/jwt.constant';
+import { CACHE_SERVICE } from '../../../common/cache/constant/cache.constant';
 
 @Injectable()
 export class JwtClientService {
-    private readonly secret: string;
-    private defaultOptions: SignOptions;
+    constructor(
+        @Inject(JWT_SERVICE)
+        private readonly jwtService: JwtServiceInterface,
 
-    constructor(private readonly jwtService: JwtService, private readonly configService: ConfigService) {
-        this.secret = this.loadSecretKey();
-        this.initJwtConfig();
+        @Inject(CACHE_SERVICE)
+        private readonly cacheService: CacheServiceInterface
+    ) {}
+
+    async createToken(memberId: number): Promise<{ accessToken: string; refreshToken: string }> {
+        const accessToken = await this.jwtService.createJwt(
+            { memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
+            { expiresIn: 60 * 5 }
+        );
+        const refreshToken = await this.jwtService.createJwt(
+            { memberId, tokenType: TokenTypeEnum.REFRESH_TOKEN },
+            { expiresIn: 60 * 60 * 24 * 30 }
+        );
+
+        await this.cacheService.set(`refresh:${memberId}`, refreshToken, 60 * 60 * 24 * 30);
+
+        return { accessToken, refreshToken };
     }
 
-    // [ onModuleInit 대신 loadSecretKey()를 사용하여 키 검증한 이유 ]
-    // 디버깅(핫 리로드) 시 소스코드 변경마다 생성자가 다시 실행되므로 매번 키 유효성을 검증할 수 있어 더 안전함
-    private loadSecretKey(): string {
-        const secretKey: string = this.configService.get<string>('JWT_SECRET_KEY');
-        if (!secretKey) {
-            throw new Error('JWT_SECRET_KEY가 없습니다.');
-        }
-
-        return secretKey;
+    async verifyToken(authHeader: string, tokenType: TokenTypeEnum): Promise<JwtPayload> {
+        return await this.jwtService.verifyJwt(authHeader, tokenType);
     }
 
-    private initJwtConfig(): void {
-        this.defaultOptions = {
-            algorithm: 'HS256',
-            header: {
-                alg: 'HS256',
-                typ: 'JWT'
-            }
-        };
-    }
+    async refreshToken(authHeader: string): Promise<{ accessToken: string; refreshToken: string }> {
+        const payload = await this.jwtService.verifyJwt(authHeader, TokenTypeEnum.REFRESH_TOKEN);
+        const [_, token] = authHeader.split(' ');
+        const cacheToken = await this.cacheService.get(`refresh:${payload.memberId}`);
 
-    /*onModuleInit() {
-        this.secret = this.configService.getOrThrow<string>('JWT_SECRET_KEY'); // getOrThrow() → 키가 잘못됬거나 undefined인 경우에만 에러 발생시킴
-
-        if (!this.secret?.trim()) {
-            throw new Error('JWT_SECRET_KEY가 없거나 잘못되었습니다.');
+        if (cacheToken !== token) {
+            throw new UnauthorizedException('유효하지 않은 refresh token 입니다.');
         }
 
-        this.defaultOptions = {
-            algorithm: 'HS256',
-            header: {
-                alg: 'HS256',
-                typ: 'JWT'
-            }
-        };
-    }*/
+        const newAccessToken = await this.jwtService.createJwt(
+            { memberId: payload.memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
+            { expiresIn: 60 * 5 }
+        );
+        const newRefreshToken = await this.jwtService.createJwt(
+            { memberId: payload.memberId, tokenType: TokenTypeEnum.REFRESH_TOKEN },
+            { expiresIn: 60 * 60 * 24 * 30 }
+        );
 
-    async createJwt(payload: Record<string, any>, options?: SignOptions): Promise<string> {
-        const option = { secret: this.secret, ...options };
+        await this.cacheService.set(`refresh:${payload.memberId}`, newRefreshToken, 60 * 60 * 24 * 30);
 
-        try {
-            return await this.jwtService.signAsync(payload, option);
-        } catch (error) {
-            throw new InternalServerErrorException(error.message);
-        }
-    }
-
-    async verifyJwt(authHeader: string, tokenType: TokenTypeEnum): Promise<JwtPayload> {
-        const [scheme, token] = authHeader.split(' ');
-
-        if (scheme?.toLowerCase() !== 'bearer' || !token) {
-            throw new BadRequestException('잘못된 토큰 정보입니다.');
-        }
-
-        const payload: JwtPayload = await this.jwtService
-            .verifyAsync(token, { secret: this.secret })
-            .then((response) => response)
-            .catch((error) => {
-                throw new UnauthorizedException(error.message);
-            });
-
-        if (payload?.tokenType !== tokenType) {
-            throw new UnauthorizedException('토큰 타입이 일치하지 않습니다.');
-        }
-
-        return payload;
+        return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     }
 }
