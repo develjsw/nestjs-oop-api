@@ -7,9 +7,12 @@ export class ResponseFormatInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(
             map((data) => {
-                return {
-                    ...(data && { data })
-                };
+                if (data) {
+                    return {
+                        ...(data && { data })
+                    };
+                }
+                return { message: '성공' };
             })
         );
     }
