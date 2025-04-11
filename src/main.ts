@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ShutdownHandler } from './core/lifecycle/shutdown.handler';
 import { SerializeInterceptor } from './common/interceptor/serialize-interceptor';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +8,14 @@ import { ResponseFormatInterceptor } from './common/interceptor/response-format.
 
 async function bootstrap() {
     const app: INestApplication = await NestFactory.create(AppModule);
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            whitelist: true,
+            forbidNonWhitelisted: true
+        })
+    );
 
     app.enableShutdownHooks();
 
