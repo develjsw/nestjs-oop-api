@@ -9,6 +9,7 @@ import { TestModule } from './module/test/test.module';
 import { AuthModule } from './module/auth/auth.module';
 import { JwtModule } from './common/jwt/jwt.module';
 import { JwtClientModule } from './module/jwt/jwt-client.module';
+import { HttpClientModule } from './http-client/http-client.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -32,7 +33,8 @@ switch (process.env.NODE_ENV) {
         TestModule,
         AuthModule,
         JwtModule,
-        JwtClientModule
+        JwtClientModule,
+        HttpClientModule
     ],
     controllers: [AppController],
     providers: [AppService]
