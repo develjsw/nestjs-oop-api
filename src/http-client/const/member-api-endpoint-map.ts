@@ -1,4 +1,4 @@
-export const memberApiEndpoint = {
+export const MEMBER_API_ENDPOINT = {
     users: {
         get: {
             userProfile: '/users/{userId}/profile',
