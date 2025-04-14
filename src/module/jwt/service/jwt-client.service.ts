@@ -5,6 +5,7 @@ import { TokenTypeEnum } from '../../../common/jwt/enum/token-type.enum';
 import { JwtPayload } from 'jsonwebtoken';
 import { JWT_SERVICE } from '../../../common/jwt/constant/jwt.constant';
 import { CACHE_SERVICE } from '../../../common/cache/constant/cache.constant';
+import { TokenType } from '../type/token.type';
 
 @Injectable()
 export class JwtClientService {
@@ -16,7 +17,7 @@ export class JwtClientService {
         private readonly cacheService: CacheServiceInterface
     ) {}
 
-    async createToken(memberId: number): Promise<{ accessToken: string; refreshToken: string }> {
+    async createToken(memberId: number): Promise<TokenType> {
         const accessToken = await this.jwtService.createJwt(
             { memberId, tokenType: TokenTypeEnum.ACCESS_TOKEN },
             { expiresIn: 60 * 5 }
@@ -35,7 +36,7 @@ export class JwtClientService {
         return await this.jwtService.verifyJwt(authHeader, tokenType);
     }
 
-    async refreshToken(authHeader: string): Promise<{ accessToken: string; refreshToken: string }> {
+    async refreshToken(authHeader: string): Promise<TokenType> {
         const payload = await this.jwtService.verifyJwt(authHeader, TokenTypeEnum.REFRESH_TOKEN);
         const [_, token] = authHeader.split(' ');
         const cacheToken = await this.cacheService.get(`refresh:${payload.memberId}`);
