@@ -7,11 +7,9 @@ export class BoardController {
     constructor(private readonly boardService: BoardService) {}
 
     @Post()
-    async createBoard(@Body() dto: CreateBoardDto): Promise<{ message: string }> {
+    async createBoard(@Body() dto: CreateBoardDto): Promise<void> {
         const { boardType } = dto;
 
         await this.boardService.createBoard(boardType);
-
-        return { message: `${boardType} 게시판 생성 완료` };
     }
 }
