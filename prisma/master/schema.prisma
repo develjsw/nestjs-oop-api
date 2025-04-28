@@ -60,11 +60,21 @@ model payment {
 }
 
 model user {
-  user_id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  user_name         String    @db.VarChar(50)
-  profile_file_path String?   @db.VarChar(200)
-  profile_file_name String?   @db.VarChar(100)
-  create_at         DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
-  update_at         DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
-  order             order[]
+  user_id   Int       @id @default(autoincrement()) @db.UnsignedInt
+  user_name String    @db.VarChar(50)
+  create_at DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
+  update_at DateTime? @default(dbgenerated("(now())")) @db.DateTime(0)
+  file      file[]
+  order     order[]
+}
+
+model file {
+  file_id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  user_id        Int    @db.UnsignedInt
+  file_name      String @db.VarChar(100)
+  file_hash_name String @db.VarChar(200)
+  file_path      String @db.VarChar(250)
+  user           user   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_file_user")
+
+  @@index([user_id], map: "FK_file_user")
 }
