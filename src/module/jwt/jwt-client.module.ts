@@ -8,6 +8,6 @@ import { JwtClientService } from './service/jwt-client.service';
     imports: [JwtModule, CacheModule],
     controllers: [JwtClientController],
     providers: [JwtClientService],
-    exports: []
+    exports: [JwtClientService]
 })
 export class JwtClientModule {}

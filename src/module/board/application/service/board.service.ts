@@ -10,7 +10,7 @@ export class BoardService {
         private readonly guestBoardStrategy: GuestBoardStrategy
     ) {}
 
-    async createBoard(boardType: string): Promise<void> {
+    async createBoard(boardType: string, memberId: number): Promise<void> {
         let strategy: BoardStrategyInterface;
 
         if (boardType === 'memberBoard') {
