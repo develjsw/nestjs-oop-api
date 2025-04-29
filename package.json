@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "master:prisma:db:pull": "npx prisma db pull --schema=prisma/master/schema.prisma",
+    "slave:prisma:db:pull": "npx prisma db pull --schema=prisma/slave/schema.prisma",
+    "master:prisma:generate": "npx prisma generate --schema=prisma/master/schema.prisma",
+    "slave:prisma:generate": "npx prisma generate --schema=prisma/slave/schema.prisma"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.797.0",
