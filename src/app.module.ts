@@ -12,6 +12,7 @@ import { JwtClientModule } from './module/jwt/jwt-client.module';
 import { HttpClientModule } from './http-client/http-client.module';
 import { BoardModule } from './module/board/board.module';
 import { UserModule } from './module/user/user.module';
+import { GlobalExceptionModule } from './common/exception/global-exception.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -30,6 +31,7 @@ switch (process.env.NODE_ENV) {
             isGlobal: true,
             cache: true
         }),
+        GlobalExceptionModule,
         CacheModule,
         LifecycleModule,
         TestModule,

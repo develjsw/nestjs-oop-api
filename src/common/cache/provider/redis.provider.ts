@@ -21,7 +21,7 @@ export class RedisProvider implements OnModuleInit, OnModuleDestroy {
         const redisHost: string = this.configService.get<string>('redis.host');
 
         if (!redisHost) {
-            throw new Error('RedisPost가 없습니다.');
+            throw new Error('RedisHost가 없습니다.');
         }
 
         return redisHost;
