@@ -7,9 +7,7 @@ import { InternalServerErrorHandler } from '../handler/http-error/internal-serve
 import { NotFoundErrorHandler } from '../handler/http-error/not-found-error.handler';
 import { UnauthorizedErrorHandler } from '../handler/http-error/unauthorized-error.handler';
 import { ConflictErrorHandler } from '../handler/http-error/conflict-error.handler';
-import { PrismaInitializationErrorHandler } from '../handler/prisma-error/prisma-initialization-error.handler';
 import { PrismaKnownRequestErrorHandler } from '../handler/prisma-error/prisma-known-request-error.handler';
-import { PrismaRustPanicErrorHandler } from '../handler/prisma-error/prisma-rust-panic-error.handler';
 import { PrismaUnknownRequestErrorHandler } from '../handler/prisma-error/prisma-unknown-request-error.handler';
 import { PrismaValidationErrorHandler } from '../handler/prisma-error/prisma-validation-error-handler';
 import { AxiosErrorHandler } from '../handler/axios-error/axios-error.handler';
@@ -27,9 +25,7 @@ export class ExceptionHandlerFactory implements OnModuleInit {
         private readonly unauthorizedHandler: UnauthorizedErrorHandler,
         private readonly conflictErrorHandler: ConflictErrorHandler,
 
-        private readonly prismaInitializationHandler: PrismaInitializationErrorHandler,
         private readonly prismaKnownRequestHandler: PrismaKnownRequestErrorHandler,
-        private readonly prismaRustPanicHandler: PrismaRustPanicErrorHandler,
         private readonly prismaUnknownRequestHandler: PrismaUnknownRequestErrorHandler,
         private readonly prismaValidationHandler: PrismaValidationErrorHandler,
 
@@ -46,9 +42,7 @@ export class ExceptionHandlerFactory implements OnModuleInit {
             this.unauthorizedHandler,
             this.conflictErrorHandler,
 
-            this.prismaInitializationHandler,
             this.prismaKnownRequestHandler,
-            this.prismaRustPanicHandler,
             this.prismaUnknownRequestHandler,
             this.prismaValidationHandler,
 

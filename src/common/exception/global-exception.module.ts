@@ -8,9 +8,7 @@ import { InternalServerErrorHandler } from './handler/http-error/internal-server
 import { NotFoundErrorHandler } from './handler/http-error/not-found-error.handler';
 import { UnauthorizedErrorHandler } from './handler/http-error/unauthorized-error.handler';
 import { ConflictErrorHandler } from './handler/http-error/conflict-error.handler';
-import { PrismaInitializationErrorHandler } from './handler/prisma-error/prisma-initialization-error.handler';
 import { PrismaKnownRequestErrorHandler } from './handler/prisma-error/prisma-known-request-error.handler';
-import { PrismaRustPanicErrorHandler } from './handler/prisma-error/prisma-rust-panic-error.handler';
 import { PrismaUnknownRequestErrorHandler } from './handler/prisma-error/prisma-unknown-request-error.handler';
 import { PrismaValidationErrorHandler } from './handler/prisma-error/prisma-validation-error-handler';
 import { AxiosErrorHandler } from './handler/axios-error/axios-error.handler';
@@ -27,9 +25,7 @@ import { AxiosErrorHandler } from './handler/axios-error/axios-error.handler';
         UnauthorizedErrorHandler,
         ConflictErrorHandler,
 
-        PrismaInitializationErrorHandler,
         PrismaKnownRequestErrorHandler,
-        PrismaRustPanicErrorHandler,
         PrismaUnknownRequestErrorHandler,
         PrismaValidationErrorHandler,
 
