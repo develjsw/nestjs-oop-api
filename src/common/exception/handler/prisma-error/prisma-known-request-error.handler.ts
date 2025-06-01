@@ -2,16 +2,30 @@ import { CustomExceptionHandler, ExceptionResponse } from '../../interface/custo
 import { PrismaClientKnownRequestError as MasterKnownRequestError } from 'prisma/generated/master-client/runtime/library';
 import { PrismaClientKnownRequestError as SlaveKnownRequestError } from 'prisma/generated/slave-client/runtime/library';
 import { HttpStatus } from '@nestjs/common';
+import { PrismaErrorCodeMap } from '../../code/prisma-error.code';
+import { formatMessage } from '../../util/error-message-formatter';
 
 export class PrismaKnownRequestErrorHandler implements CustomExceptionHandler {
     canHandle(exception: any): boolean {
         return exception instanceof MasterKnownRequestError || exception instanceof SlaveKnownRequestError;
     }
 
-    handle(): ExceptionResponse {
+    handle(exception: any): ExceptionResponse {
+        const { code, meta, message } = exception;
+        const errorInfo = PrismaErrorCodeMap[code];
+
+        if (errorInfo) {
+            const errorMessage: string = formatMessage(errorInfo.message, meta ?? {});
+            return {
+                message: errorMessage,
+                error: `Prisma Error (${code})`,
+                statusCode: errorInfo.status
+            };
+        }
+
         return {
-            message: 'DB 제약조건 위반 등 사전에 정의된 오류',
-            error: 'Prisma Known Request Error',
+            message: '정의되지 않은 Prisma 요청 오류입니다.',
+            error: `Unhandled Prisma Error (${code})`,
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR
         };
     }

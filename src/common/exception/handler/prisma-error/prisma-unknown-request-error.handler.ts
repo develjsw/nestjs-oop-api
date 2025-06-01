@@ -8,9 +8,11 @@ export class PrismaUnknownRequestErrorHandler implements CustomExceptionHandler 
         return exception instanceof MasterUnknownRequestError || exception instanceof SlaveUnknownRequestError;
     }
 
-    handle(): ExceptionResponse {
+    handle(exception: any): ExceptionResponse {
+        const { message } = exception;
+
         return {
-            message: '알 수 없는 Prisma 요청 에러',
+            message: '알 수 없는 Prisma 요청 에러입니다.',
             error: 'Prisma Unknown Request Error',
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR
         };

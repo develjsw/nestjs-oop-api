@@ -8,11 +8,13 @@ export class PrismaValidationErrorHandler implements CustomExceptionHandler {
         return exception instanceof MasterValidationError || exception instanceof SlaveValidationError;
     }
 
-    handle(): ExceptionResponse {
+    handle(exception: any): ExceptionResponse {
+        const { message } = exception;
+
         return {
-            message: 'Prisma 유효성 검증 실패 에러',
+            message: 'Prisma 유효성 검증 실패 에러입니다.',
             error: 'Prisma Validation Error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR
+            statusCode: HttpStatus.BAD_REQUEST
         };
     }
 }
