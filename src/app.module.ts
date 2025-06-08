@@ -13,6 +13,7 @@ import { HttpClientModule } from './http-client/http-client.module';
 import { BoardModule } from './module/board/board.module';
 import { UserModule } from './module/user/user.module';
 import { GlobalExceptionModule } from './common/exception/global-exception.module';
+import { DiscoveryClientModule } from './common/discovery/discovery-client.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -40,7 +41,8 @@ switch (process.env.NODE_ENV) {
         JwtClientModule,
         HttpClientModule,
         BoardModule,
-        UserModule
+        UserModule,
+        DiscoveryClientModule
     ],
     controllers: [AppController],
     providers: [AppService]
