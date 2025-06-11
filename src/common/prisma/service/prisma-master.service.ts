@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient as PrismaMasterClient } from '../../../../prisma/generated/master-client';
+import { Prisma, PrismaClient as PrismaMasterClient } from '@prisma-master-client';
 
 @Injectable()
 export class PrismaMasterService extends PrismaMasterClient implements OnModuleInit {
@@ -16,5 +16,9 @@ export class PrismaMasterService extends PrismaMasterClient implements OnModuleI
 
     async onModuleInit() {
         await this.$connect();
+    }
+
+    async runInTransaction<T>(callback: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+        return this.$transaction((tx: Prisma.TransactionClient) => callback(tx));
     }
 }
