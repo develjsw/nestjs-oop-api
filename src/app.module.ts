@@ -6,7 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from './common/cache/cache.module';
 import { LifecycleModule } from './core/lifecycle/lifecycle.module';
 import { TestModule } from './module/test/test.module';
-import { AuthModule } from './module/auth/auth.module';
 import { JwtModule } from './common/jwt/jwt.module';
 import { JwtClientModule } from './module/jwt/jwt-client.module';
 import { HttpClientModule } from './http-client/http-client.module';
@@ -14,6 +13,7 @@ import { BoardModule } from './module/board/board.module';
 import { UserModule } from './module/user/user.module';
 import { GlobalExceptionModule } from './common/exception/global-exception.module';
 import { DiscoveryClientModule } from './common/discovery/discovery-client.module';
+import { AuthModule } from './common/auth/auth.module';
 
 let envFile = 'env.local';
 switch (process.env.NODE_ENV) {
@@ -36,13 +36,13 @@ switch (process.env.NODE_ENV) {
         CacheModule,
         LifecycleModule,
         TestModule,
-        AuthModule,
         JwtModule,
         JwtClientModule,
         HttpClientModule,
         BoardModule,
         UserModule,
-        DiscoveryClientModule
+        //DiscoveryClientModule,
+        AuthModule
     ],
     controllers: [AppController],
     providers: [AppService]
