@@ -15,8 +15,6 @@ export class JwtService implements JwtServiceInterface {
         this.initJwtConfig();
     }
 
-    // [ onModuleInit 대신 loadSecretKey()를 사용하여 키 검증한 이유 ]
-    // 디버깅(핫 리로드) 시 소스코드 변경마다 생성자가 다시 실행되므로 매번 키 유효성을 검증할 수 있어 더 안전함
     private loadSecretKey(): string {
         const secretKey: string = this.configService.get<string>('jwt.secretKey');
         if (!secretKey) {
@@ -35,22 +33,6 @@ export class JwtService implements JwtServiceInterface {
             }
         };
     }
-
-    /*onModuleInit() {
-        this.secret = this.configService.getOrThrow<string>('JWT_SECRET_KEY'); // getOrThrow() → 키가 잘못됬거나 undefined인 경우에만 에러 발생시킴
-
-        if (!this.secret?.trim()) {
-            throw new Error('JWT_SECRET_KEY가 없거나 잘못되었습니다.');
-        }
-
-        this.defaultOptions = {
-            algorithm: 'HS256',
-            header: {
-                alg: 'HS256',
-                typ: 'JWT'
-            }
-        };
-    }*/
 
     async createJwt(payload: Record<string, any>, options?: SignOptions): Promise<string> {
         const option = { secret: this.secret, ...options };
@@ -76,7 +58,7 @@ export class JwtService implements JwtServiceInterface {
                 throw new UnauthorizedException(error.message);
             });
 
-        if (payload?.tokenType !== tokenType) {
+        if (payload?.type !== tokenType) {
             throw new UnauthorizedException('토큰 타입이 일치하지 않습니다.');
         }
 

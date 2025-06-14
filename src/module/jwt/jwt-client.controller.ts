@@ -9,7 +9,7 @@ export class JwtClientController {
 
     @Post()
     async createJwt(@Body() dto: CreateJwtDto) {
-        return await this.jwtClientService.createToken(dto.memberId);
+        return await this.jwtClientService.createToken(dto.userId, dto.userRole);
     }
 
     @Get('verify')
